@@ -15,11 +15,11 @@ const Home: React.FC = () => {
   }, []);
 
   const endpoint = process.env.NEXT_PUBLIC_SOLANA_ENDPOINT; // Use the environment variable here
+  const wallets = useMemo(() => [new PhantomWalletAdapter()], []);
   if (!endpoint) {
     console.error("Solana endpoint is not defined");
     return <div className="text-red-500 text-center p-4">Error: Solana endpoint is not defined</div>;
   }
-  const wallets = useMemo(() => [new PhantomWalletAdapter()], []);
 
   if (!isClient) {
     return null; // Return null during server-side rendering
