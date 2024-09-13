@@ -6,6 +6,7 @@ import '@solana/wallet-adapter-react-ui/styles.css';
 import Airdrop from '@/components/Airdrop';
 import { PhantomWalletAdapter } from '@solana/wallet-adapter-wallets';
 import Navbar from '@/components/Navbar';
+import { clusterApiUrl } from '@solana/web3.js';
 
 const Home: React.FC = () => {
   const [isClient, setIsClient] = useState(false);
@@ -14,13 +15,8 @@ const Home: React.FC = () => {
     setIsClient(true);
   }, []);
 
-  const endpoint = process.env.NEXT_PUBLIC_SOLANA_ENDPOINT; // Use the environment variable here
+  const endpoint = process.env.NEXT_PUBLIC_SOLANA_ENDPOINT || clusterApiUrl('devnet');
   const wallets = useMemo(() => [new PhantomWalletAdapter()], []);
-  if (!endpoint) {
-    console.error("Solana endpoint is not defined");
-    return <div className="text-red-500 text-center p-4">Error: Solana endpoint is not defined</div>;
-  }
-
   if (!isClient) {
     return null; // Return null during server-side rendering
   }
