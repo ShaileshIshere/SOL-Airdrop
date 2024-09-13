@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from 'react';
-import { useConnection, useWallet } from "@solana/wallet-adapter-react";
+import { useWallet } from "@solana/wallet-adapter-react";
 import { Button } from './UI/Button';
 import { Connection, LAMPORTS_PER_SOL } from '@solana/web3.js';
 
@@ -49,17 +49,21 @@ const Airdrop: React.FC = () => {
             console.log('Airdrop completed');
             setMessage({ type: 'success', content: `Airdropped ${parsedAmount} SOL successfully` });
             setAmount('');
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error('Airdrop failed:', error);
             
-            if (error.message.includes('429 Too Many Requests')) {
-                setMessage({ type: 'error', content: 'Rate limit exceeded. Please try again later.' });
-            } else if (error.message.includes('Invalid amount')) {
-                setMessage({ type: 'error', content: error.message });
-            } else if (error.message.includes('Not enough lamports available')) {
-                setMessage({ type: 'error', content: 'Insufficient funds in the airdrop faucet. Try again later.' });
+            if (error instanceof Error) {
+                if (error.message.includes('429 Too Many Requests')) {
+                    setMessage({ type: 'error', content: 'Rate limit exceeded. Please try again later.' });
+                } else if (error.message.includes('Invalid amount')) {
+                    setMessage({ type: 'error', content: error.message });
+                } else if (error.message.includes('Not enough lamports available')) {
+                    setMessage({ type: 'error', content: 'Insufficient funds in the airdrop faucet. Try again later.' });
+                } else {
+                    setMessage({ type: 'error', content: `Airdrop failed: ${error.message}` });
+                }
             } else {
-                setMessage({ type: 'error', content: `Airdrop failed: ${error.message}` });
+                setMessage({ type: 'error', content: 'An unknown error occurred' });
             }
         } finally {
             setIsLoading(false);
